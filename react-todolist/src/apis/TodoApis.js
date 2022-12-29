@@ -19,4 +19,12 @@ const getTodos = () => {
   return fetch(URL).then((res) => res.json());
 };
 
-export { addTodo, removeTodo, getTodos };
+const editTodo = (id, data) => {
+  return fetch(URL + `/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json"}
+  }).then((res) => res.json());
+};
+
+export { addTodo, removeTodo, getTodos, editTodo };

@@ -1,6 +1,6 @@
 import React from "react";
 import TodoItem from "./TodoItem/TodoItem";
-import { getTodos, addTodo, removeTodo } from "../../apis/TodoApis";
+import { getTodos, addTodo, removeTodo, editTodo } from "../../apis/TodoApis";
 
 import "./TodoList.css";
 
@@ -30,6 +30,7 @@ class TodoList extends React.Component {
       const newTodo = {
         title: this.state.inputText,
         completed: false,
+        edited: false
       };
       //batching
       addTodo(newTodo).then((todo) => {
@@ -66,6 +67,16 @@ class TodoList extends React.Component {
     });
   };
 
+  handleEdit = (id, data) => {
+    editTodo(id, data).then((res) => {
+      console.log(res);
+      let {title, edited, completed} = res;
+      this.setState({
+        todos: this.state.todos.map((todo) => +todo.id === +id ? {...todo, title, edited, completed} : todo)
+      })
+    })
+  }
+
   shouldComponentUpdate() {
     /* console.log(
       "scu",
@@ -74,11 +85,11 @@ class TodoList extends React.Component {
     ); //1,1 */
     return true;
   }
-  /* 
+  /*
     virtual DOM: object
     DOM(document object model): object
     map in jsx:
-    key: 
+    key:
 
 
     diffing algorithm:
@@ -99,7 +110,7 @@ class TodoList extends React.Component {
     lifecycle:
       1. change of state or props
       2. trigger the render cycle, shouldComponentUpdate, render
-      3. render method create new virtual dom object using the new state or props 
+      3. render method create new virtual dom object using the new state or props
       4. old virtual dom, diffing algorithm, compare new virtual
       5. update the real dom more efficiently, reconciliation
       6. componentDidUpdate
@@ -121,15 +132,15 @@ class TodoList extends React.Component {
 
     console.log("js",React.createElement("div", null,"123"))   */
 
-    /* 
+    /*
       without key
       1. two virtual doms without key
       2. diffing algorithm, React doesn't know which is which, so it have to compare the difference one by one
-      
+
       with key
       1. two virtual doms with key
       2. React can identify which one has changed or removed or added, so it will remain the rest of the element intact
-    
+
     */
     return (
       <section className="todolist">
@@ -148,9 +159,16 @@ class TodoList extends React.Component {
           </button>
         </form>
         <ul className="todolist__content">
-          {this.state.todos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} onDelete={this.handleDelete} />
-          ))}
+          <h3>Tasks to Complete</h3>
+          {this.state.todos.map((todo) => !todo.completed ? (
+            <TodoItem key={todo.id} todo={todo} onDelete={this.handleDelete} onEdit={this.handleEdit}/>
+          ) : null)}
+        </ul>
+        <ul className="todolist__content">
+          <h3>Completed</h3>
+          {this.state.todos.map((todo) => todo.completed ? (
+            <TodoItem key={todo.id} todo={todo} onDelete={this.handleDelete} onEdit={this.handleEdit}/>
+          ) : null)}
         </ul>
       </section>
     );

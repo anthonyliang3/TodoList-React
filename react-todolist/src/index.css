@@ -30,12 +30,16 @@ code {
   border-radius: 5px;
   padding: 5px;
   cursor: pointer;
+  width: 75px;
 }
 
 .btn--primary {
   background-color: var(--color-primary);
 }
 
+.btn--edit {
+  background-color: #4bb543;
+}
 .btn--delete {
   background-color: var(--color-secondary);
 }
